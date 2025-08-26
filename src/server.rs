@@ -1,5 +1,8 @@
 use crate::config::{self, Config};
-use std::net::{TcpListener, TcpStream};
+use std::{
+    io::Read,
+    net::{TcpListener, TcpStream},
+};
 
 pub fn run(config: Config) -> std::io::Result<()> {
     let listener = TcpListener::bind((&config.host[..], config.port))?;
@@ -14,4 +17,10 @@ pub fn run(config: Config) -> std::io::Result<()> {
     Ok(())
 }
 
-fn handle_connection(stream: TcpStream, config: &Config) {}
+fn handle_connection(mut stream: TcpStream, config: &Config) {
+    let mut buf = vec![0_u8; 512];
+
+    stream.read(&mut buf).unwrap();
+    let request_str = std::str::from_utf8(&buf).unwrap();
+    println!("{}", request_str);
+}
