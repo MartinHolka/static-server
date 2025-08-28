@@ -10,6 +10,8 @@ pub fn handle_get(path: &str, root_dir: &str) -> Vec<u8> {
     let mut full_path = Path::new(root_dir).join(&path[1..]); // remove leading "/"
     if path.ends_with("/") {
         full_path = full_path.join("index.html");
+    } else if full_path.extension().is_none() {
+        full_path = full_path.with_extension("html")
     }
 
     let (status_line, body) = match fs::read(&full_path) {
